@@ -3,12 +3,15 @@ import './App.css';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import { OrbitControls } from "@react-three/drei";
-import { BufferAttribute } from "three";
+import { Box3Helper, BufferAttribute } from "three";
+import { mapLinear } from 'three/src/math/MathUtils';
 
 
 
 function App() {
   const DIM = 32;
+  const p = new Array();
+  let x = 0;
   function Cube() {
     const meshRef = useRef();
     const shape1 = 
@@ -19,9 +22,9 @@ function App() {
     });
     return (
       <points ref={meshRef}>
-          <octahedronGeometry args={[2, 25]}/>
+          <boxGeometry args={[2, 2, 2]}/>
           <pointsMaterial
-            size={.05}
+            size={.15}
             threshold={0.5}
             color={15054}
             sizeAttenuation={true}
@@ -29,11 +32,21 @@ function App() {
       </points>
     )
   }
-  function BufferPoints({ count = 80000 }) {
+  const point = ()=>{
+    for (let i = -32; i < DIM; i++) {
+      for (let j = -32; j < DIM; j++) {
+        for (let k = -32; k < DIM; k++) {
+          x = p.push(i,j,k)
+        }
+      }
+    }
+  }
+  function BufferPoints() {
     const points = useMemo (() => {
-      const p = new Array(count).fill(0).map((v) => (0.5 - Math.random()) * 120);
-      return new BufferAttribute(new Float32Array(p), 3);
-    }, [count]);
+      point();
+      return new BufferAttribute(
+        new Float32Array(p),3)
+    }, []);
   
     return (
       <points>
@@ -41,8 +54,8 @@ function App() {
           <bufferAttribute attach={"attributes-position"} {...points} />
         </bufferGeometry>
         <pointsMaterial
-          size={.07}
-          threshold={0.1}
+          size={.1}
+          threshold={0.5}
           color={0xC30F0F}
           sizeAttenuation={true}
         />
@@ -54,7 +67,7 @@ function App() {
         <pointLight position={[8,12,15]}/>
         <OrbitControls />
         <BufferPoints/>
-        <Cube/>
+        <axesHelper />
       </Canvas>
   );
 }
