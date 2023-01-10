@@ -11,8 +11,6 @@ import { Float32BufferAttribute, Vector3 } from "three";
 function App() {
   const DIM = 254;
   const  mandelBulb = new Array();
-  
-  
 
   function map(value, start1, stop1, start2, stop2) {
     return parseFloat((value - start1)*(stop2 - start2) / (stop1 - start1) + start2);
@@ -41,7 +39,7 @@ function App() {
           let z = map(k, 0, DIM, -1, 1);
 
           const n = 16;
-          let maxIterations = 20;
+          let maxIterations = 30;
           let iteration = 0;
           
           let zeta = new Vector3(0,0,0);
@@ -59,25 +57,21 @@ function App() {
             zeta.y = newy + y;
             zeta.z = newz + z;
             
-            
             iteration++
             
             if (r > 2) {
               if (edge) {
                 edge = false;
-                console.log("you're in the if cZ if > 16");
               }
               break;
             }
             if (iteration > maxIterations) {
               if (!edge) {
                 edge = true;
-                // console.log(x);
                 mandelBulb.push(x*100, y*100, z*100);
               }
               break;
             } 
-            
           }          
         }
       }
@@ -96,7 +90,7 @@ function App() {
           <bufferAttribute attach={"attributes-position"} {...points} />
         </bufferGeometry>
         <pointsMaterial
-          size={.0001}
+          size={.001}
           threshold={0.5}
           color={0xf7a902}
           sizeAttenuation={true}
